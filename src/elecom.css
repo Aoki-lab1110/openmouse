@@ -10,6 +10,21 @@
 .elecom-panel p { line-height: 1.65; }
 .elecom-status { background: var(--surface-panel-soft); border-radius: 20px; padding: 12px 20px; margin: 24px 0 12px; }
 .elecom-status p { margin: 6px 0; }
+.elecom-monitor { margin-top: 24px; background: var(--surface-panel-soft); border-radius: 20px; padding: 20px; }
+.elecom-monitor h2 { margin: 0; font-size: 20px; }
+.elecom-button-map { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.elecom-panel .elecom-button-cell { flex-direction: column; gap: 6px; border-radius: 16px; padding: 12px 8px; }
+.elecom-button-cell strong { font-size: 24px; }
+.elecom-button-cell span { font-size: 13px; }
+.elecom-cell-binding { overflow-wrap: anywhere; line-height: 1.5; }
+.elecom-panel .elecom-button-cell:disabled { opacity: 1; }
+.elecom-panel .elecom-button-cell.is-selected { outline: 2px solid var(--info); outline-offset: 2px; }
+.elecom-panel .elecom-button-cell.is-active { background: var(--ui-accent); color: var(--ui-accent-ink); }
+.elecom-input-result { margin-bottom: 0; color: var(--info); }
+.elecom-official-diagram { margin: 16px 0; }
+.elecom-official-diagram img { width: 100%; height: auto; display: block; object-fit: contain; border-radius: 12px; }
+.elecom-official-diagram figcaption { font-size: 13px; line-height: 1.65; margin-top: 8px; color: var(--text-soft); }
+.elecom-official-diagram a { color: var(--info); }
 .elecom-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 .elecom-panel button, .elecom-button { border: 0; border-radius: 24px; background: var(--surface-raised); color: var(--text); padding: 12px 20px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
 .elecom-panel button:hover, .elecom-button:hover { background: var(--surface-hover); }
@@ -37,6 +52,7 @@
 .elecom-footer { display: flex; gap: 20px; justify-content: space-between; align-items: center; }
 .elecom-footer button { flex-shrink: 0; }
 @media (max-width: 680px) {
+  .elecom-button-map { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .control-shell.elecom-shell { padding: 12px; }
   .elecom-panel { padding: 20px; }
   .elecom-binding { grid-template-columns: 1fr; gap: 12px; }

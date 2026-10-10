@@ -1,19 +1,31 @@
 /** Local EX-G PRO helper. No device data or configuration leaves this machine. */
 export interface ElecomModifiers { command: boolean; control: boolean; option: boolean; shift: boolean }
 export interface ElecomShortcut { keyCode: number; modifiers: ElecomModifiers }
-export type ElecomSystemAction = "missionControl" | "applicationWindows" | "showDesktop";
+export type ElecomSystemAction = "missionControl" | "applicationWindows" | "showDesktop" | "applicationSwitcher";
 export type ElecomAction = ElecomShortcut | { systemAction: ElecomSystemAction };
 export const ELECOM_SYSTEM_ACTIONS: readonly (readonly [ElecomSystemAction, string])[] = [
   ["missionControl", "Mission Control"],
   ["applicationWindows", "アプリケーションのウインドウ"],
   ["showDesktop", "デスクトップを表示"],
+  ["applicationSwitcher", "アプリ切り替え（クリックで一覧表示）"],
 ];
 export type ElecomFamily = "mouse" | "trackball";
 export interface ElecomConfig { enabled: boolean; mappings: Partial<Record<ElecomFamily, Record<string, ElecomAction>>> }
 export interface ElecomStatus {
   version: string; accessibility: boolean; inputMonitoring: boolean; config: ElecomConfig;
-  devices: { id: string; family: ElecomFamily; productId: number; lastExtraButton: number | null }[];
+  identifying: boolean;
+  devices: ElecomDevice[];
   error: string | null;
+}
+export interface ElecomDevice {
+  id: string; family: ElecomFamily; productId: number; lastExtraButton: number | null;
+  productName: string | null; transport: string | null; model: string;
+  buttons: { pressedMask: number | null; pressCounts: number[]; lastButton: number | null };
+}
+export function changedElecomButton(before: ElecomDevice | undefined, after: ElecomDevice): number | null {
+  if (!before || before.id !== after.id) return null;
+  const changed = after.buttons.pressCounts.map((count, index) => count > before.buttons.pressCounts[index] ? index + 1 : 0).filter(Boolean);
+  return changed.includes(after.buttons.lastButton ?? 0) ? after.buttons.lastButton : changed.at(-1) ?? null;
 }
 export const ELECOM_BUTTONS = [6, 7, 8] as const;
 export const ELECOM_KEYS: readonly (readonly [number, string])[] = [
@@ -48,13 +60,13 @@ function base(): string {
   return location.port === "17847" && ["localhost", "127.0.0.1"].includes(location.hostname)
     ? location.origin : "http://127.0.0.1:17847";
 }
-export async function elecomRequest<T>(path = "", config?: ElecomConfig): Promise<T> {
+export async function elecomRequest<T>(path = "", config?: ElecomConfig | { active: boolean } | { family: ElecomFamily; button: number }): Promise<T> {
   const response = await fetch(`${base()}/v1/elecom${path}`, {
     method: config !== undefined || path ? "PUT" : "GET",
     headers: config ? { "Content-Type": "application/json" } : {},
     body: config ? JSON.stringify(config) : undefined,
     credentials: "omit", cache: "no-store", signal: AbortSignal.timeout(3000),
   });
-  if (!response.ok) throw new Error(`設定を保存できませんでした（${response.status}）`);
+  if (!response.ok) throw new Error((await response.text()).slice(0, 300) || `ヘルパーへの要求に失敗しました（${response.status}）`);
   return response.json() as Promise<T>;
 }
