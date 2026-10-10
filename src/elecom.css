@@ -25,6 +25,11 @@
 .elecom-modifiers label, .elecom-enable { display: flex; gap: 8px; align-items: center; min-height: 40px; }
 .elecom-panel input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--ui-accent); }
 .elecom-binding output { font-size: 24px; text-align: center; }
+.elecom-binding output.is-system { font-size: 14px; overflow-wrap: anywhere; line-height: 1.5; }
+.elecom-binding.is-system { grid-template-columns: minmax(0, 1fr) 120px; gap: 12px 24px; }
+.elecom-binding.is-system .elecom-key { grid-column: 1; grid-row: 1; }
+.elecom-binding.is-system > p { grid-column: 1; grid-row: 2; margin: 0; }
+.elecom-binding.is-system output { grid-column: 2; grid-row: 1 / span 2; }
 .elecom-enable { margin-top: 20px; }
 .elecom-panel .elecom-primary { background: var(--ui-accent); color: var(--ui-accent-ink); }
 .elecom-panel .elecom-primary:hover { background: var(--ui-accent); }
@@ -35,6 +40,8 @@
   .control-shell.elecom-shell { padding: 12px; }
   .elecom-panel { padding: 20px; }
   .elecom-binding { grid-template-columns: 1fr; gap: 12px; }
+  .elecom-binding.is-system { grid-template-columns: 1fr; }
+  .elecom-binding.is-system .elecom-key, .elecom-binding.is-system > p, .elecom-binding.is-system output { grid-column: auto; grid-row: auto; }
   .elecom-binding output { text-align: left; }
   .elecom-footer { flex-direction: column; align-items: start; }
   .elecom-heading { align-items: start; flex-wrap: wrap; }

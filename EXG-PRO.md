@@ -2,6 +2,8 @@
 
 EX-G PROの追加ボタン6〜8を⌘Zなどのショートカットへ割り当てるUIを追加しています。物理マウスの実機確認は未実施です。
 
+v0.2.0のヘルパーでは、操作の選択欄に「Mission Control」「アプリケーションのウインドウ」「デスクトップを表示」を追加しています。通常キーのF11送信とmacOSのデスクトップ表示は別の選択肢です。macOS操作を選ぶと修飾キー欄の代わりに説明を表示します。旧キーボード割り当ては引き継ぎます。
+
 `npm run build:elecom` はローカル専用の `dist-elecom/elecom.html` を生成します。通常アプリの起動処理、外部フォント、ニュース、更新確認、サービスワーカーを読み込まない独立entryです。`dist-elecom` は一般向けの `dist` と別の成果物です。
 
 設定の適用には [Bridge forkの専用ヘルパー](https://github.com/Aoki-lab1110/OpenMouse-Bridge/tree/feat/elecom-exg-pro/elecom-helper) が必要です。WebHIDのマウスコレクションは保護対象なので、通常の「デバイスに接続」からは扱いません。ホーム画面のEX-G PROリンクも専用ローカル画面を開きます。

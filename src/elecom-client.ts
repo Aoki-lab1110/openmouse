@@ -1,8 +1,15 @@
 /** Local EX-G PRO helper. No device data or configuration leaves this machine. */
 export interface ElecomModifiers { command: boolean; control: boolean; option: boolean; shift: boolean }
 export interface ElecomShortcut { keyCode: number; modifiers: ElecomModifiers }
+export type ElecomSystemAction = "missionControl" | "applicationWindows" | "showDesktop";
+export type ElecomAction = ElecomShortcut | { systemAction: ElecomSystemAction };
+export const ELECOM_SYSTEM_ACTIONS: readonly (readonly [ElecomSystemAction, string])[] = [
+  ["missionControl", "Mission Control"],
+  ["applicationWindows", "アプリケーションのウインドウ"],
+  ["showDesktop", "デスクトップを表示"],
+];
 export type ElecomFamily = "mouse" | "trackball";
-export interface ElecomConfig { enabled: boolean; mappings: Partial<Record<ElecomFamily, Record<string, ElecomShortcut>>> }
+export interface ElecomConfig { enabled: boolean; mappings: Partial<Record<ElecomFamily, Record<string, ElecomAction>>> }
 export interface ElecomStatus {
   version: string; accessibility: boolean; inputMonitoring: boolean; config: ElecomConfig;
   devices: { id: string; family: ElecomFamily; productId: number; lastExtraButton: number | null }[];
@@ -25,7 +32,12 @@ export function shortcutLabel(shortcut: ElecomShortcut): string {
   const m = shortcut.modifiers;
   return `${m.control ? "⌃" : ""}${m.option ? "⌥" : ""}${m.shift ? "⇧" : ""}${m.command ? "⌘" : ""}${ELECOM_KEYS.find(([code]) => code === shortcut.keyCode)?.[1] ?? shortcut.keyCode}`;
 }
-export function setElecomBinding(config: ElecomConfig, family: ElecomFamily, button: number, shortcut: ElecomShortcut | null): ElecomConfig {
+export function elecomActionLabel(action: ElecomAction): string {
+  return "systemAction" in action
+    ? ELECOM_SYSTEM_ACTIONS.find(([name]) => name === action.systemAction)?.[1] ?? "未対応の操作"
+    : shortcutLabel(action);
+}
+export function setElecomBinding(config: ElecomConfig, family: ElecomFamily, button: number, shortcut: ElecomAction | null): ElecomConfig {
   if (!ELECOM_BUTTONS.some(value => value === button)) throw new Error("Only buttons 6–8 are assignable");
   const bindings = { ...config.mappings[family] };
   if (shortcut) bindings[button] = shortcut;

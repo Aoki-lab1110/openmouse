@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Keyboard, MousePointerClick } from "lucide-react";
-import { ELECOM_BUTTONS, ELECOM_KEYS, elecomRequest, setElecomBinding, shortcutLabel,
+import { ELECOM_BUTTONS, ELECOM_KEYS, ELECOM_SYSTEM_ACTIONS, elecomRequest, setElecomBinding, elecomActionLabel,
   type ElecomConfig, type ElecomFamily, type ElecomModifiers, type ElecomStatus } from "../elecom-client";
 import "../elecom.css";
 
@@ -82,7 +82,7 @@ export function ElecomPanel({ embedded = false }: { embedded?: boolean }) {
           <h1 id="elecom-heading"><MousePointerClick aria-hidden="true" size={28} /> EX-G PRO</h1></div>
         <span className="elecom-badge">実機検証前</span>
       </header>
-      <p>追加ボタンを、⌘Zなどのキーボードショートカットに割り当てます。</p>
+      <p>追加ボタンを、Mission Controlや⌘Zなどの操作に割り当てます。</p>
       <div className="elecom-status" aria-live="polite">
         {!status ? <p>ヘルパーに接続できません。OpenMouse EX-G PRO.appを起動してください。</p> : <>
           <p>{status.devices.length ? `接続中：${status.devices.map(device => `EX-G PRO (${device.productId.toString(16).padStart(4, "0")})`).join("、")}` : "対応するマウスはまだ検出されていません。"}</p>
@@ -104,31 +104,40 @@ export function ElecomPanel({ embedded = false }: { embedded?: boolean }) {
           </select>
         </label>
         {ELECOM_BUTTONS.map(button => {
-          const shortcut = config.mappings[family]?.[button];
-          return <div className="elecom-binding" key={button}>
+          const action = config.mappings[family]?.[button];
+          const shortcut = action && "keyCode" in action ? action : undefined;
+          const system = action && "systemAction" in action ? action.systemAction : undefined;
+          return <div className={`elecom-binding${system ? " is-system" : ""}`} key={button}>
             <label className="elecom-key">追加ボタン {button}
-              <select aria-label={`ボタン${button}のキー`} value={shortcut?.keyCode ?? "none"} onChange={event => {
+              <select aria-label={`ボタン${button}の操作`} value={system ? `system:${system}` : shortcut?.keyCode ?? "none"} onChange={event => {
                 const value = event.currentTarget.value;
-                edit(setElecomBinding(config, family, button, value === "none" ? null : {
-                  keyCode: Number(value), modifiers: shortcut?.modifiers ?? { command: true, control: false, option: false, shift: false },
+                const selectedSystem = ELECOM_SYSTEM_ACTIONS.find(([name]) => value === `system:${name}`);
+                edit(setElecomBinding(config, family, button, value === "none" ? null : selectedSystem ? { systemAction: selectedSystem[0] } : {
+                  keyCode: Number(value), modifiers: shortcut?.modifiers ?? { command: Number(value) < 96, control: false, option: false, shift: false },
                 }));
               }}>
                 <option value="none">割り当てなし</option>
-                {ELECOM_KEYS.map(([code, label]) => <option key={code} value={code}>{label}</option>)}
+                <optgroup label="macOSの操作">
+                  {ELECOM_SYSTEM_ACTIONS.map(([name, label]) => <option key={name} value={`system:${name}`}>{label}</option>)}
+                </optgroup>
+                <optgroup label="キーボードのキー">
+                  {ELECOM_KEYS.map(([code, label]) => <option key={code} value={code}>{label.startsWith("F") && label.length > 1 ? `${label}（キー送信）` : label}</option>)}
+                </optgroup>
               </select>
             </label>
-            <div className="elecom-modifiers" role="group" aria-label={`ボタン${button}の修飾キー`}>
+            {system ? <p className="elecom-caption">macOSの操作を直接呼び出します。修飾キーの選択は不要です。</p> : <div className="elecom-modifiers" role="group" aria-label={`ボタン${button}の修飾キー`}>
               {MODIFIERS.map(([key, label]) => <label key={key}>
                 <input type="checkbox" checked={shortcut?.modifiers[key] ?? false} disabled={!shortcut} onChange={event => {
                   if (shortcut) edit(setElecomBinding(config, family, button, { ...shortcut, modifiers: { ...shortcut.modifiers, [key]: event.currentTarget.checked } }));
                 }} />{label}
               </label>)}
-            </div>
-            <output aria-label={`ボタン${button}の割り当て`}>{shortcut ? shortcutLabel(shortcut) : "—"}</output>
+            </div>}
+            <output className={system ? "is-system" : undefined} aria-label={`ボタン${button}の割り当て`}>{action ? elecomActionLabel(action) : "—"}</output>
           </div>;
         })}
         <label className="elecom-enable"><input type="checkbox" checked={config.enabled} onChange={event => edit({ ...config, enabled: event.currentTarget.checked })} />追加ボタンの割り当てを有効にする</label>
         <p className="elecom-caption">例：キー「Z」と「⌘ Command」を選ぶと⌘Z。1回の押下につき1回送信します。通常ボタン1〜5はそのままです。</p>
+        <p className="elecom-caption">ウインドウ一覧は「アプリケーションのウインドウ」、全体の一覧は「Mission Control」を選びます。デスクトップを表示したい場合は、F11のキー送信と区別して「デスクトップを表示」を選んでください。</p>
         <p className="elecom-caption">起動直後の最初の入力は状態確認に使います。最初の押下が反応しない場合は離して再押下してください。</p>
         <button className="elecom-primary" type="button" onClick={() => void save()} disabled={!dirty}>{busy ? "保存中…" : "保存して適用"}</button>
       </fieldset>
