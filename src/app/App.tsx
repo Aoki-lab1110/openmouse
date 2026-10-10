@@ -4,6 +4,7 @@ import { ensureLocale } from "../i18n";
 import { interfaceThemeSlug } from "../interface-preferences";
 import { AppSidebar, type DesktopPage } from "./AppSidebar";
 import { OverviewPage } from "./OverviewPage";
+import { ElecomPanel } from "./ElecomPanel";
 import { CaptureDialog } from "./CaptureDialog";
 import { FeedbackDialog } from "./FeedbackDialog";
 import { GamesPage, useBridgeActive } from "./GamesPage";
@@ -149,6 +150,7 @@ export function App(): ReactNode {
           <p className="app-live-region" role="status" aria-live="polite">
             {snapshot.readStatus}
           </p>
+          {resolvedPage === "home" && <ElecomPanel embedded />}
         </div>
         <PendingBar snapshot={snapshot} />
       </main>

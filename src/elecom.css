@@ -1,0 +1,41 @@
+.control-shell.elecom-shell { display: block; width: 100%; max-width: 1020px; margin: 0 auto; padding: 40px 24px; min-height: 100vh; }
+.elecom-panel { background: var(--surface-panel); border-radius: 28px; padding: 28px; color: var(--text); margin-block: 20px; }
+.elecom-panel h1, .elecom-panel h2, .elecom-form legend { display: flex; align-items: center; gap: 12px; }
+.elecom-panel h1 { font-size: 32px; margin: 8px 0; }
+.elecom-panel h2 { font-size: 22px; }
+.elecom-panel svg { color: var(--info); flex-shrink: 0; }
+.elecom-heading { display: flex; gap: 16px; align-items: center; justify-content: space-between; }
+.elecom-badge { background: var(--surface-raised); color: var(--warning); border-radius: 20px; padding: 8px 14px; white-space: nowrap; }
+.elecom-caption { font-size: 13px; color: var(--text-soft); line-height: 1.65; }
+.elecom-panel p { line-height: 1.65; }
+.elecom-status { background: var(--surface-panel-soft); border-radius: 20px; padding: 12px 20px; margin: 24px 0 12px; }
+.elecom-status p { margin: 6px 0; }
+.elecom-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.elecom-panel button, .elecom-button { border: 0; border-radius: 24px; background: var(--surface-raised); color: var(--text); padding: 12px 20px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+.elecom-panel button:hover, .elecom-button:hover { background: var(--surface-hover); }
+.elecom-panel button:disabled { opacity: .5; cursor: default; }
+.elecom-form { border: 0; padding: 0; margin: 30px 0 0; min-width: 0; }
+.elecom-form legend { font-size: 20px; font-weight: 600; margin-bottom: 20px; }
+.elecom-family, .elecom-key { display: grid; gap: 10px; }
+.elecom-panel select { background: var(--surface-input); color: var(--text-input); border: 1px solid var(--border); border-radius: 12px; padding: 12px; font: inherit; width: 100%; min-height: 44px; }
+.elecom-panel select:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+.elecom-family { margin-bottom: 18px; }
+.elecom-binding { display: grid; grid-template-columns: 160px 1fr 80px; gap: 24px; align-items: center; background: var(--surface-panel-soft); border-radius: 20px; padding: 20px; margin: 12px 0; }
+.elecom-modifiers { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
+.elecom-modifiers label, .elecom-enable { display: flex; gap: 8px; align-items: center; min-height: 40px; }
+.elecom-panel input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--ui-accent); }
+.elecom-binding output { font-size: 24px; text-align: center; }
+.elecom-enable { margin-top: 20px; }
+.elecom-panel .elecom-primary { background: var(--ui-accent); color: var(--ui-accent-ink); }
+.elecom-panel .elecom-primary:hover { background: var(--ui-accent); }
+.elecom-message { min-height: 24px; color: var(--info); }
+.elecom-footer { display: flex; gap: 20px; justify-content: space-between; align-items: center; }
+.elecom-footer button { flex-shrink: 0; }
+@media (max-width: 680px) {
+  .control-shell.elecom-shell { padding: 12px; }
+  .elecom-panel { padding: 20px; }
+  .elecom-binding { grid-template-columns: 1fr; gap: 12px; }
+  .elecom-binding output { text-align: left; }
+  .elecom-footer { flex-direction: column; align-items: start; }
+  .elecom-heading { align-items: start; flex-wrap: wrap; }
+}
